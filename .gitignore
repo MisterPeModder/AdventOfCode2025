@@ -23,3 +23,5 @@ erl_crash.dump
 advent_of_code-*.tar
 
 /.direnv/
+
+/.aoc/
