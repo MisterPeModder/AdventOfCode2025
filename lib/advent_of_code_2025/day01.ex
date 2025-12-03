@@ -19,16 +19,18 @@ defmodule AdventOfCode2025.Day01 do
   @impl true
   @spec part1(data :: list({integer(), pos_integer()})) :: integer()
   def part1(data) do
-    Enum.reduce(data, {50, 0}, fn {side, distance}, acc -> rotate(side * distance, acc) end)
+    for {side, distance} <- data, reduce: {50, 0} do
+      acc -> rotate(side * distance, acc)
+    end
     |> elem(1)
   end
 
   @impl true
   @spec part2(data :: list({integer(), pos_integer()})) :: integer()
   def part2(data) do
-    data
-    |> Stream.flat_map(&to_unit_rotations/1)
-    |> Enum.reduce({50, 0}, &rotate/2)
+    for {side, distance} <- data, unit <- List.duplicate(side, distance), reduce: {50, 0} do
+      acc -> rotate(unit, acc)
+    end
     |> elem(1)
   end
 
@@ -51,10 +53,5 @@ defmodule AdventOfCode2025.Day01 do
       0 -> {0, count + 1}
       new_pos -> {new_pos, count}
     end
-  end
-
-  @spec to_unit_rotations(rotation()) :: list(side())
-  defp to_unit_rotations({side, distance}) do
-    Stream.repeatedly(fn -> side end) |> Enum.take(distance)
   end
 end
