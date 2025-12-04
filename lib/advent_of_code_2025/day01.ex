@@ -1,5 +1,5 @@
 defmodule AdventOfCode2025.Day01 do
-  use AdventOfCodeRunner.Solution, year: 2025, day: 1
+  use AdventOfCodeRunner.Solution
 
   @type side :: 1 | -1
   @type rotation :: {side :: side(), distance :: pos_integer()}

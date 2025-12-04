@@ -1,6 +1,4 @@
 defmodule AdventOfCodeRunner.Solution do
-  alias AdventOfCodeRunner.SolutionInfo
-
   @type solution :: pid()
   @type data :: term()
   @type result :: integer()
@@ -10,15 +8,8 @@ defmodule AdventOfCodeRunner.Solution do
   @callback part2(data()) :: result()
 
   defmacro __using__(args) when is_list(args) do
-    info = %SolutionInfo{
-      year: Keyword.fetch!(args, :year),
-      day: Keyword.fetch!(args, :day)
-    }
-
     quote do
       @behaviour AdventOfCodeRunner.Solution
-
-      def info(), do: unquote(Macro.escape(info))
 
       def setup(input), do: {:ok, input}
       defoverridable setup: 1
@@ -27,11 +18,6 @@ defmodule AdventOfCodeRunner.Solution do
 
       def part2(input)
     end
-  end
-
-  @spec info(module) :: SolutionInfo.t()
-  def info(module) do
-    module.info()
   end
 
   @spec setup(solution(), term()) :: {:ok, data()} | {:error, atom()}

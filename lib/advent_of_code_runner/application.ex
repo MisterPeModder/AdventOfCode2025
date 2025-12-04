@@ -1,15 +1,27 @@
 defmodule AdventOfCodeRunner.Application do
-  alias AdventOfCodeRunner.{Solution, SolutionInfo}
+  alias AdventOfCodeRunner.Solution
   use Application
 
   @cache_dir ".aoc"
   @config_path "#{@cache_dir}/config.json"
 
+  @help_text """
+  Advent of Code solutions, powered by Elixir
+
+  Usage: mix run -- -d <day>
+
+  Supported options:
+    --help, -h
+    --year, -y
+    --day, -d
+  """
+
   @impl true
   def start(_start_type, _start_args) do
-    solution = AdventOfCode2025.Day01
+    {year, day} = parse_opts!()
 
-    %SolutionInfo{year: year, day: day} = solution.info()
+    solution =
+      :"Elixir.AdventOfCode#{year}.Day#{String.pad_leading(Integer.to_string(day), 2, "0")}"
 
     IO.puts("== Running Advent of Code #{year} - Day #{day} ==")
 
@@ -25,6 +37,33 @@ defmodule AdventOfCodeRunner.Application do
     run_aoc(solution, input)
 
     {:ok, self()}
+  end
+
+  defp parse_opts!() do
+    {opts, _} =
+      OptionParser.parse!(System.argv(),
+        strict: [year: :integer, day: :integer, help: :boolean],
+        aliases: [y: :year, d: :day, h: :help]
+      )
+
+    if opts[:help] do
+      IO.puts(@help_text)
+      exit(0)
+    end
+
+    day =
+      case opts[:day] do
+        nil ->
+          IO.puts(:stderr, @help_text)
+          exit(1)
+
+        d ->
+          d
+      end
+
+    year = Keyword.get(opts, :year, 2025)
+
+    {year, day}
   end
 
   defp run_aoc(solution, input) do
